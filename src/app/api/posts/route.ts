@@ -37,14 +37,15 @@ export async function GET(request: NextRequest) {
         include: {
           user: { select: { displayName: true, username: true, img: true } },
           _count: { select: { likes: true, rePosts: true, comments: true } },
-
-          likes: { where: { userId: userId }, select: { id: true } },
+           likes: { where: { userId: userId }, select: { id: true } },
           rePosts: { where: { userId: userId }, select: { id: true } },
+          saves: { where: { userId: userId }, select: { id: true } },
         },
       },
       _count: { select: { likes: true, rePosts: true, comments: true } },
       likes: { where: { userId: userId }, select: { id: true } },
       rePosts: { where: { userId: userId }, select: { id: true } },
+      saves: { where: { userId: userId }, select: { id: true } },
     },
 
     take: LIMIT,

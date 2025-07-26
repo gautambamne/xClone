@@ -20,10 +20,13 @@ type postWithDetails = PostType & {
     _count: { likes: number; rePosts: number; comments: number };
     likes: { id: number }[];
     rePosts: { id: number }[];
+    saves: { id: number }[];
+
   }) | null;
   _count: { likes: number; rePosts: number; comments: number };
   likes: { id: number }[];
   rePosts: { id: number }[];
+  saves: { id: number }[];
 };
 
 const Post = ({
@@ -133,6 +136,8 @@ const Post = ({
           <PostInteractions
             count={originalPost._count}
             isLiked={!!originalPost.likes.length}
+            isRePosted={!!originalPost.rePosts.length}
+            isSaved={!!originalPost.saves.length}
           />
         </div>
       </div>

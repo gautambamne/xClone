@@ -34,11 +34,13 @@ const Feed = async ({ userProfileId }: { userProfileId?: string }) => {
           _count: { select: { likes: true, rePosts: true, comments: true } },
           likes: { where: { userId: userId }, select: { id: true } },
           rePosts: { where: { userId: userId }, select: { id: true } },
+          saves: { where: { userId: userId }, select: { id: true } },
         },
       },
       _count: { select: { likes: true, rePosts: true, comments: true } },
       likes: { where: { userId: userId }, select: { id: true } },
       rePosts: { where: { userId: userId }, select: { id: true } },
+      saves: { where: { userId: userId }, select: { id: true } },
     },
     take: 3,
     skip: 0,
@@ -51,7 +53,7 @@ const Feed = async ({ userProfileId }: { userProfileId?: string }) => {
     <div className="">
       {posts.map((post) => (
         <div key={post.id}>
-          <Post post ={post} />
+          <Post post={post} />
         </div>
       ))}
       <InfiniteFeed />
