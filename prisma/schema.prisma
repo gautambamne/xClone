@@ -9,9 +9,9 @@ datasource db {
 }
 
 model User {
-  id          String   @id
-  email       String   @unique
-  username    String   @unique
+  id          String    @id
+  email       String    @unique
+  username    String    @unique
   displayName String?
   bio         String?
   location    String?
@@ -19,8 +19,8 @@ model User {
   website     String?
   img         String?
   cover       String?
-  createdAt   DateTime @default(now()) @db.Timestamp(6)
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime? @updatedAt
 
   // Relation
   posts      Post[]
@@ -36,6 +36,7 @@ model Post {
   updatedAt   DateTime @updatedAt
   desc        String?  @db.VarChar(255)
   img         String?
+  imgHeight   Int?
   video       String?
   isSensitive Boolean  @default(false)
 

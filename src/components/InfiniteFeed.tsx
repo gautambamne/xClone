@@ -23,7 +23,7 @@ const InfiniteFeed = ({ userProfileId }: { userProfileId?: string }) => {
       lastPage.hasMore ? pages.length + 2 : undefined,
   });
 
-  if (error) return "Something wnt wrong!";
+  if (error) return "Something went wrong!";
   if (status == "pending") return "Loading...";
   console.log(data);
   const allPosts = data?.pages?.flatMap((page) => page.posts) || [];
