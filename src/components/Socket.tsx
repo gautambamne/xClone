@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { socket } from "../socket";
+import { useUser } from "@clerk/nextjs";
 
 export default function Socket() {
   const [isConnected, setIsConnected] = useState(false);
   const [transport, setTransport] = useState("N/A");
-  const{user} = newUser()
+  const{user} = useUser()
 
   useEffect(() => {
     if (socket.connected) {
@@ -40,10 +41,7 @@ export default function Socket() {
   }, [user]);
 
   return (
-    <div>
-      <p>Status: { isConnected ? "connected" : "disconnected" }</p>
-      <p>Transport: { transport }</p>
-    </div>
+   <span></span>
   );
 }
 

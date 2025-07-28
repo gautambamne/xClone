@@ -4,30 +4,25 @@ import PostInteractions from "./PostInteractions";
 import { Post as PostType } from "../generated/prisma/client";
 import Link from "next/link";
 import { format } from "date-fns";
+import { User } from "@clerk/nextjs/server";
 
-type postWithDetails = PostType & {
-  user: {
-    displayName: string | null;
+type UserSummary={
+   displayName: string | null;
     username: string;
     img: string | null;
-  };
-  rePost?: (PostType & {
-    user: {
-      displayName: string | null;
-      username: string;
-      img: string | null;
-    };
+}
+
+type Engagement = {
     _count: { likes: number; rePosts: number; comments: number };
     likes: { id: number }[];
     rePosts: { id: number }[];
     saves: { id: number }[];
+}
 
-  }) | null;
-  _count: { likes: number; rePosts: number; comments: number };
-  likes: { id: number }[];
-  rePosts: { id: number }[];
-  saves: { id: number }[];
-};
+type postWithDetails = PostType & Engagement &{
+  user: UserSummary
+  rePost?: (PostType & Engagement & { user: UserSummary }) | null;
+}
 
 const Post = ({
   type,
@@ -134,6 +129,7 @@ const Post = ({
             <span className="text-textGray">8:41 PM · Dec 5, 2024</span>
           )}
           <PostInteractions
+          username = {originalPost.user.username}
           postId = {originalPost.id}
             count={originalPost._count}
             isLiked={!!originalPost.likes.length}
