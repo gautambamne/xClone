@@ -1,8 +1,10 @@
+"use client"
 import Link from "next/link";
 import Image from "./Image";
 import Socket from "./Socket";
 import Notification from "./Notification";
 import React from "react";
+import { useUser } from "@clerk/nextjs";
 
 const menuList = [
   {
@@ -67,7 +69,13 @@ const menuList = [
   },
 ];
 
+
 const LeftBar = () => {
+    const { isLoaded, isSignedIn, user } = useUser();
+
+  if (!isLoaded) {
+    return <div>Loading...</div>;
+  }
   return (
     <div className="h-screen sticky top-0 flex flex-col justify-between pt-2 pb-8">
       {/* LOGO MENU BUTTON */}
@@ -128,8 +136,8 @@ const LeftBar = () => {
             />
           </div>
           <div className="hidden xxl:flex flex-col">
-            <span className="font-bold">Lama Dev</span>
-            <span className="text-sm text-textGray">@lamaWebDev</span>
+            <span className="font-bold">{user?.fullName}</span>
+            <span className="text-sm text-textGray">@{user?.username}</span>
           </div>
         </div>
         <div className="hidden xxl:block cursor-pointer font-bold">...</div>

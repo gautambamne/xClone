@@ -1,7 +1,7 @@
 "use client";
-import { use, useEffect, useState } from "react";
+
+import { useEffect, useState } from "react";
 import Image from "./Image";
-import Socket from "./Socket";
 import React from "react";
 import { socket } from "@/socket";
 import { useRouter } from "next/navigation";
@@ -16,14 +16,25 @@ type NotificationType = {
 export default function Notification() {
   const [notifications, setNotifications] = useState<NotificationType[]>([]);
   const [open, setOpen] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
-    socket.on("getNotification", (data: NotificationType) => {
-      setNotifications((prev) => [...prev, data]);
-    });
-  }, []);
+    const handleGetNotification = (data: NotificationType) => {
+      setNotifications((prev) => {
+        const isAlreadyPresent = prev.some(n => n.id === data.id);
+        if (isAlreadyPresent) {
+          return prev;
+        }
+        return [data, ...prev];
+      });
+    };
 
-  const router = useRouter();
+    socket.on("getNotification", handleGetNotification);
+
+    return () => {
+      socket.off("getNotification", handleGetNotification);
+    };
+  }, []);
 
   const reset = () => {
     setNotifications([]);
@@ -31,8 +42,7 @@ export default function Notification() {
   };
 
   const handleClick = (notification: NotificationType) => {
-    const filteredList = notifications.filter((n) => n.id !== notification.id);
-    setNotifications(filteredList);
+    setNotifications((prev) => prev.filter((n) => n.id !== notification.id));
     setOpen(false);
     router.push(notification.link);
   };
@@ -44,40 +54,41 @@ export default function Notification() {
         onClick={() => setOpen((prev) => !prev)}
       >
         <div className="relative">
-          <Image path="icons/notification.svg" alt="" w={24} h={24} />
-         { 
-            notifications.length > 0 &&
-          <div className="absolute -top-4 -right-4 w-6 h-6 bg-iconBlue p-2 rounded-full flex items-center justify-center text-sm">
-            {notifications.length}
-          </div>}
+          <Image path="icons/notification.svg" alt="Notifications" w={24} h={24} />
+          {notifications.length > 0 && (
+            <div className="absolute top-0 left-4 w-2 h-2 bg-iconBlue rounded-full"></div>
+          )}
         </div>
         <span className="hidden xxl:inline">Notifications</span>
       </div>
       {open && (
-        <div className="absolute -right-full p-4 rounded-lg bg-white text-black flex flex-col gap-4 w-max">
-          <h1 className="text-xl text-textGray">Notification</h1>
-          {notifications.map((n) => (
-            <div
-              className="curosor-pointer"
-              key={n.id}
-              onClick={() => handleClick(n)}
-            >
-              <b>{n.senderUsername}</b>
-              {""}
-              {n.type === "like"
-                ? " liked your post"
-                : n.type === "rePost"
-                ? " re-posted your post"
-                : n.type === "comment"
-                ? "replied your post"
-                : " followed you"}
-            </div>
-          ))}
+        <div className="absolute top-full right-0 p-4 rounded-lg bg-white text-black flex flex-col gap-4 w-max z-20 border">
+          <h1 className="text-xl text-gray-500">Notifications</h1>
+          {notifications.length > 0 ? (
+            notifications.map((n) => (
+              <div
+                className="cursor-pointer"
+                key={n.id}
+                onClick={() => handleClick(n)}
+              >
+                <b>{n.senderUsername}</b>
+                {n.type === "like"
+                  ? " liked your post"
+                  : n.type === "rePost"
+                  ? " re-posted your post"
+                  : n.type === "comment"
+                  ? " replied to your post"
+                  : " followed you"}
+              </div>
+            ))
+          ) : (
+            <span className="text-gray-500">No new notifications.</span>
+          )}
           <button
             onClick={reset}
             className="bg-black text-white p-2 text-sm rounded-lg "
           >
-            Mark as read
+            Mark all as read
           </button>
         </div>
       )}
